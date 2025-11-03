@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+  <title><%= item.title %> - Curriculum</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1><%= item.title %></h1>
+      <p><a href="/curricula">Back to browse</a></p>
+    </div>
+    <div class="row">
+      <div class="col-sm-8">
+        <% if (item.imageUrl) { %>
+          <img class="img-responsive" src="<%= item.imageUrl %>">
+        <% } %>
+        <p><%= item.description || '' %></p>
+        <p>Provider: <%= item.providerName || '—' %> <% if (item.externalUrl) { %> | <a href="<%= item.externalUrl %>" target="_blank">Visit resource</a><% } %></p>
+        <p>Grade: <%= item.gradeLevel || '—' %></p>
+        <p>Subjects: <%= (item.subjects||[]).join(', ') %></p>
+        <p>Interests: <%= (item.interests||[]).join(', ') %></p>
+        <p>Format: <%= item.format %> | Cost: <%= item.cost %> <%= item.price? ('$'+item.price): '' %></p>
+        <p>Language: <%= item.language || 'English' %> | Faith-based: <%= item.faithBased? 'Yes' : 'No' %></p>
+      </div>
+      <div class="col-sm-4">
+        <h3>Rating</h3>
+        <p><strong><%= (item.averageRating||0).toFixed(1) %></strong> average from <%= item.ratingsCount||0 %> reviews</p>
+        <% if (user) { %>
+        <form method="post" action="/curricula/<%= item._id %>/reviews">
+          <div class="form-group">
+            <label>Rating</label>
+            <select class="form-control" name="rating" required>
+              <% [1,2,3,4,5].forEach(function(r){ %>
+                <option value="<%= r %>"><%= r %></option>
+              <% }) %>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Comment</label>
+            <textarea class="form-control" name="comment" rows="3"></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Submit Review</button>
+        </form>
+        <% } else { %>
+          <p><a href="/login">Log in</a> to leave a review.</p>
+        <% } %>
+        <% if (user && user.role === 'admin') { %>
+          <hr>
+          <form method="post" action="/admin/curricula/<%= item._id %>">
+            <div class="form-group"><label>Title</label><input class="form-control" type="text" name="title" value="<%= item.title %>"></div>
+            <div class="form-group"><label>Description</label><textarea class="form-control" name="description" rows="3"><%= item.description||'' %></textarea></div>
+            <div class="form-group"><label>Grade level</label><input class="form-control" type="text" name="gradeLevel" value="<%= item.gradeLevel||'' %>"></div>
+            <div class="form-group"><label>Subjects (comma)</label><input class="form-control" type="text" name="subjects" value="<%= (item.subjects||[]).join(',') %>"></div>
+            <div class="form-group"><label>Interests (comma)</label><input class="form-control" type="text" name="interests" value="<%= (item.interests||[]).join(',') %>"></div>
+            <div class="form-group"><label>Format</label><input class="form-control" type="text" name="format" value="<%= item.format %>"></div>
+            <div class="form-group"><label>Cost</label><input class="form-control" type="text" name="cost" value="<%= item.cost %>"></div>
+            <div class="form-group"><label>Price</label><input class="form-control" type="number" step="0.01" name="price" value="<%= item.price||0 %>"></div>
+            <div class="form-group"><label>Image URL</label><input class="form-control" type="text" name="imageUrl" value="<%= item.imageUrl||'' %>"></div>
+            <div class="form-group"><label>Provider</label><input class="form-control" type="text" name="providerName" value="<%= item.providerName||'' %>"></div>
+            <div class="form-group"><label>External URL</label><input class="form-control" type="text" name="externalUrl" value="<%= item.externalUrl||'' %>"></div>
+            <button class="btn btn-warning" type="submit">Save Changes</button>
+          </form>
+          <form style="margin-top:8px" method="post" action="/admin/curricula/<%= item._id %>/delete">
+            <button class="btn btn-danger" type="submit" onclick="return confirm('Delete curriculum?')">Delete</button>
+          </form>
+        <% } %>
+      </div>
+    </div>
+
+    <hr>
+    <h3>Reviews</h3>
+    <% reviews.forEach(function(r){ %>
+      <div style="border-bottom:1px solid #eee; padding:8px 0;">
+        <div><strong><%= r.user && r.user.local ? r.user.local.email : 'User' %></strong> rated <strong><%= r.rating %></strong></div>
+        <div><%= r.comment || '' %></div>
+      </div>
+    <% }) %>
+  </div>
+</body>
+</html>
+
+

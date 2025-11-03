@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+  <title>Compare Curricula</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .compare-table th, .compare-table td { vertical-align: top; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="page-header">
+      <h1>Compare</h1>
+      <p><a href="/curricula">Back to browse</a></p>
+    </div>
+    <div class="table-responsive">
+      <table class="table table-bordered compare-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <% items.forEach(function(it){ %>
+              <th><a href="/curricula/<%= it._id %>"><%= it.title %></a></th>
+            <% }) %>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Provider</td><% items.forEach(it=>{ %><td><%= it.providerName||'' %></td><% }) %></tr>
+          <tr><td>Grade</td><% items.forEach(it=>{ %><td><%= it.gradeLevel||'—' %></td><% }) %></tr>
+          <tr><td>Subjects</td><% items.forEach(it=>{ %><td><%= (it.subjects||[]).join(', ') %></td><% }) %></tr>
+          <tr><td>Interests</td><% items.forEach(it=>{ %><td><%= (it.interests||[]).join(', ') %></td><% }) %></tr>
+          <tr><td>Format</td><% items.forEach(it=>{ %><td><%= it.format %></td><% }) %></tr>
+          <tr><td>Cost</td><% items.forEach(it=>{ %><td><%= it.cost %> <%= it.price? ('$'+it.price): '' %></td><% }) %></tr>
+          <tr><td>Rating</td><% items.forEach(it=>{ %><td><strong><%= (it.averageRating||0).toFixed(1) %></strong> (<%= it.ratingsCount||0 %>)</td><% }) %></tr>
+          <tr><td>Language</td><% items.forEach(it=>{ %><td><%= it.language||'English' %></td><% }) %></tr>
+          <tr><td>Faith-based</td><% items.forEach(it=>{ %><td><%= it.faithBased? 'Yes':'No' %></td><% }) %></tr>
+          <tr><td>Link</td><% items.forEach(it=>{ %><td><% if (it.externalUrl) { %><a target="_blank" href="<%= it.externalUrl %>">Open</a><% } %></td><% }) %></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
+
+

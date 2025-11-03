@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+  <title>Browse Curricula</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .curriculum-card { border: 1px solid #eee; padding: 16px; margin-bottom: 16px; border-radius: 6px; background: #fff; }
+    .curriculum-title { font-size: 18px; font-weight: 600; margin: 0 0 8px; }
+    .rating { color: #f39c12; font-weight: 600; }
+    .filters .form-control { margin-bottom: 8px; }
+    .compare-actions { position: sticky; bottom: 12px; background: #fafafa; padding: 8px; border: 1px solid #eee; border-radius: 6px; }
+  </style>
+  <script>
+    function submitCompare() {
+      var boxes = document.querySelectorAll('input[name="compareIds"]:checked');
+      var ids = Array.prototype.map.call(boxes, function(b){return b.value}).join(',');
+      if (!ids) { alert('Select at least one curriculum to compare'); return; }
+      window.location = '/compare?ids=' + encodeURIComponent(ids);
+    }
+  </script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="page-header">
+        <h1>Curricula</h1>
+        <p><a href="/">Home</a> <% if (user) { %> | <a href="/logout">Logout</a><% } else { %> | <a href="/login">Login</a> | <a href="/signup">Signup</a><% } %></p>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-3 filters">
+          <form method="get" action="/curricula">
+            <input class="form-control" type="text" name="q" placeholder="Search..." value="<%= (query.q||'') %>">
+            <input class="form-control" type="text" name="gradeLevel" placeholder="Grade level" value="<%= (query.gradeLevel||'') %>">
+            <input class="form-control" type="text" name="subjects" placeholder="Subjects (comma-separated)" value="<%= (query.subjects||'') %>">
+            <input class="form-control" type="text" name="interests" placeholder="Interests (comma-separated)" value="<%= (query.interests||'') %>">
+            <select class="form-control" name="format">
+              <option value="">Any format</option>
+              <% ['video','pdf','live','self-paced','website','app','book','mixed','other'].forEach(function(f){ %>
+                <option value="<%= f %>" <%= (query.format===f?'selected':'') %>><%= f %></option>
+              <% }) %>
+            </select>
+            <select class="form-control" name="cost">
+              <option value="">Any cost</option>
+              <option value="free" <%= (query.cost==='free'?'selected':'') %>>Free</option>
+              <option value="paid" <%= (query.cost==='paid'?'selected':'') %>>Paid</option>
+            </select>
+            <button class="btn btn-primary btn-block" type="submit">Apply Filters</button>
+          </form>
+          <% if (user && user.role === 'admin') { %>
+            <hr>
+            <a class="btn btn-success btn-block" href="/curricula/new">Add Curriculum</a>
+          <% } %>
+        </div>
+        <div class="col-sm-9">
+          <div class="row">
+            <% items.forEach(function(it){ %>
+              <div class="col-sm-6">
+                <div class="curriculum-card">
+                  <div class="curriculum-title"><a href="/curricula/<%= it._id %>"><%= it.title %></a></div>
+                  <div><%= it.providerName || '' %></div>
+                  <div>Grade: <%= it.gradeLevel || '—' %></div>
+                  <div>Subjects: <%= (it.subjects||[]).join(', ') %></div>
+                  <div>Format: <%= it.format %> | Cost: <%= it.cost %> <%= it.price? ('$'+it.price): '' %></div>
+                  <div class="rating">Rating: <%= (it.averageRating||0).toFixed(1) %> (<%= it.ratingsCount||0 %>)</div>
+                  <div><label><input type="checkbox" name="compareIds" value="<%= it._id %>"> Compare</label></div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+          <div class="compare-actions">
+            <button class="btn btn-info" onclick="submitCompare()">Compare Selected</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  </html>
+
+
