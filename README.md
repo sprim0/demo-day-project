@@ -13,3 +13,4 @@ Lessons Learned:
 The biggest learning experience from this project was mastering EJS templating and understanding how to properly structure views in an Express application.
 
 
+<img width="1422" height="696" alt="demo day" src="https://github.com/user-attachments/assets/ad455c73-d702-4266-9697-8a0da5a21533" />
