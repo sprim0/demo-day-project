@@ -27,7 +27,8 @@ module.exports = function (app, passport) {
     failureFlash: true
   }));
   app.get('/signup', function (req, res) {
-    res.render('../views/signup.ejs', { message: req.flash('signupMessage') });
+    res.render('signup', { message: req.flash('signupMessage') });
+    // res.render('../views/signup.ejs', { message: req.flash('signupMessage') });
   });
   app.post('/signup', passport.authenticate('local-signup', {
     successRedirect: '/curricula',
@@ -144,3 +145,4 @@ module.exports = function (app, passport) {
 };
 
 
+//  completed with the help of claude sonnet 

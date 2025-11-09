@@ -7,24 +7,7 @@ var userSchema = mongoose.Schema({
         password     : String
     },
     role             : { type: String, enum: ['parent', 'admin'], default: 'parent' },
-    facebook         : {
-        id           : String,
-        token        : String,
-        name         : String,
-        email        : String
-    },
-    twitter          : {
-        id           : String,
-        token        : String,
-        displayName  : String,
-        username     : String
-    },
-    google           : {
-        id           : String,
-        token        : String,
-        email        : String,
-        name         : String
-    }
+
 });
 
 userSchema.methods.generateHash = function(password) {
@@ -38,3 +21,4 @@ userSchema.methods.validPassword = function(password) {
 module.exports = mongoose.model('User', userSchema);
 
 
+// <!-- completed with the help of claude sonnet -->

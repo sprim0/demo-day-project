@@ -10,15 +10,27 @@ var cookieParser = require('cookie-parser');
 var bodyParser   = require('body-parser');
 var session      = require('express-session');
 
-// var dbUrl = process.env.MONGODB_URI || require('./config/database').url;
-var dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/your-database-name';
+var configDB = require('./config/database.js');
+
+var db
+
+const url = "mongodb+srv://sherrellprimo_db_user:1GLQTaDPIc2ogRAB@cluster0.wajnrkv.mongodb.net/trips?appName=Cluster0";
+// var dbUrl = process.env.MONGODB_URI || 'mongodb://localhost:27017/your-database-name';
 
 require('./config/passport')(passport);
 
-mongoose.connect(dbUrl, (err, database) => {
-  if (err) return console.log(err)
-  require('./app/routes')(app, passport);
-});
+// mongoose.connect(dbUrl, (err, database) => {
+//   if (err) return console.log(err)
+//   require('./app/routes')(app, passport);
+// });
+mongoose.connect(configDB.url)
+  .then(() => {
+    console.log('Connected to MongoDB');
+    require('./app/routes')(app, passport);
+  })
+  .catch(err => {
+    console.log('MongoDB connection error:', err);
+  });
 
 app.use(morgan('dev'));
 app.use(cookieParser());
